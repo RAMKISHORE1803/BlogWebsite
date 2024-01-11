@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { UserContext } from "../UserContext";
 
 const Header = () => {
-  const [username, setUsername] = useState(null);
+  const { userInfo, setUserInfo } = useContext(UserContext);
 
   useEffect(() => {
     fetch("http://localhost:3000/profile", {
       credentials: "include",
     }).then((response) => {
       response.json().then((userInfo) => {
-        setUsername(userInfo.username);
+        setUserInfo(userInfo);
       });
     });
   }, []);
@@ -19,8 +20,11 @@ const Header = () => {
       method: "POST",
       credentials: "include",
     });
-    setUsername(null);
+    setUserInfo(null);
   }
+
+  const username = userInfo?.username; //optional chaining operator
+  //checking if the userInfo object is defined and not null or undefined. If userInfo is defined, it then attempts to access the username property of userInfo. However, if userInfo is null or undefined, the expression short-circuits, and username is assigned undefined
 
   return (
     <header className="bg-gray-800 p-4 flex justify-between items-center mb-4 fixed w-full top-0 z-10">
