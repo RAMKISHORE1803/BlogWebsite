@@ -7,17 +7,19 @@ const User = require("./models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const secret = "ifeifsifsjwnrhbhjv";
+const cookieParser = require("cookie-parser");
 
 const salt = bcrypt.genSaltSync(10);
 
 app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 app.use(express.json());
+app.use(cookieParser());
 
 mongoose.connect(
   "mongodb+srv://admin:0123456789@cluster0.sxoweqm.mongodb.net/"
 );
 
-//registration route
+// registration route
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -27,7 +29,8 @@ app.post("/register", async (req, res) => {
     });
     res.json(userDoc);
   } catch (e) {
-    console.log(e);
+    console.error(e);
+    res.status(500).json({ error: "Registration failed" });
   }
 });
 
@@ -45,6 +48,20 @@ app.post("/login", async (req, res) => {
   } else {
     res.status(400).json("wrong credentials");
   }
+});
+
+//check if loggedin
+app.get("/profile", (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, secret, {}, (err, info) => {
+    if (err) throw err;
+    res.json(info);
+  });
+});
+
+//loggin out the user
+app.post("/logout", (req, res) => {
+  res.cookie("token", "").json("ok");
 });
 
 //Starting server
