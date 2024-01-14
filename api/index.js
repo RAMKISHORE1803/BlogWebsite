@@ -38,9 +38,15 @@ app.post("/register", async (req, res) => {
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
   const userDoc = await User.findOne({ username });
+
+  if (!userDoc) {
+    // User does not exist
+    return res.status(400).json({ message: "User not found, Please Register" });
+  }
+
   const passOk = bcrypt.compareSync(password, userDoc.password);
   if (passOk) {
-    //logged in
+    // Logged in successfully
     jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
       if (err) throw err;
       res.cookie("token", token).json({
@@ -49,7 +55,8 @@ app.post("/login", async (req, res) => {
       });
     });
   } else {
-    res.status(400).json("wrong credentials");
+    // Wrong password
+    res.status(400).json({ message: "Please check your credentials" });
   }
 });
 
@@ -62,10 +69,13 @@ app.get("/profile", (req, res) => {
   });
 });
 
-//loggin out the user
+//log out the user
 app.post("/logout", (req, res) => {
   res.cookie("token", "").json("ok");
 });
+
+//creating a new post
+app.post("/post", (req, res) => {});
 
 //Starting server
 app.listen(PORT, (req, res) => {

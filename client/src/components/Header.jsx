@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../UserContext";
 
@@ -23,11 +23,10 @@ const Header = () => {
     setUserInfo(null);
   }
 
-  const username = userInfo?.username; //optional chaining operator
-  //checking if the userInfo object is defined and not null or undefined. If userInfo is defined, it then attempts to access the username property of userInfo. However, if userInfo is null or undefined, the expression short-circuits, and username is assigned undefined
+  const username = userInfo?.username;
 
   return (
-    <header className="bg-gray-800 p-4 flex justify-between items-center mb-4 fixed w-full top-0 z-10">
+    <header className="bg-gray-800 p-4 flex justify-between items-center w-full top-0 z-10">
       <div>
         <Link to="/" className="text-white text-xl font-bold">
           MyBlogs
