@@ -1,29 +1,23 @@
 import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../UserContext";
+import useProfile from "../hooks/useProfile";
 
 const Header = () => {
-  const { userInfo, setUserInfo } = useContext(UserContext);
+  const { userInfo, setUserInfo } = useContext(UserContext); // Destructure setUserInfo from the context
+  const { loading } = useProfile();
 
-  useEffect(() => {
-    fetch("http://localhost:3000/profile", {
-      credentials: "include",
-    }).then((response) => {
-      response.json().then((userInfo) => {
-        setUserInfo(userInfo);
-      });
-    });
-  }, []);
+  const username = userInfo?.username;
 
   function logout() {
     fetch("http://localhost:3000/logout", {
       method: "POST",
       credentials: "include",
+    }).then(() => {
+      // Update the userInfo state after successful logout
+      setUserInfo(null);
     });
-    setUserInfo(null);
   }
-
-  const username = userInfo?.username;
 
   return (
     <header className="bg-gray-800 p-4 flex justify-between items-center w-full top-0 z-10">

@@ -1,19 +1,15 @@
 import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../UserContext";
+import useProfile from "../hooks/useProfile";
 
 const LandingPage = () => {
-  const { userInfo, setUserInfo } = useContext(UserContext);
+  const { userInfo } = useContext(UserContext);
+  const { loading } = useProfile(); // Destructure loading from the custom hook
 
-  useEffect(() => {
-    fetch("http://localhost:3000/profile", {
-      credentials: "include",
-    }).then((response) => {
-      response.json().then((userInfo) => {
-        setUserInfo(userInfo);
-      });
-    });
-  }, [setUserInfo]); // Added dependency array
+  if (loading) {
+    return null; // or render a loading indicator
+  }
 
   const username = userInfo?.username;
 

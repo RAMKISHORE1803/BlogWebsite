@@ -22,6 +22,14 @@ mongoose.connect(
 // registration route
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
+  const userDoc = await User.findOne({ username });
+  if (userDoc) {
+    // User already exists
+    return res
+      .status(400)
+      .json({ message: "User already exists, Try signing in" });
+  }
+
   try {
     const userDoc = await User.create({
       username,

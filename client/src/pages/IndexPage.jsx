@@ -1,36 +1,31 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import Post from "../components/Post";
 import { UserContext } from "../UserContext";
 import { Navigate } from "react-router-dom";
+import useProfile from "../hooks/useProfile";
 
 const IndexPage = () => {
-  const { userInfo, setUserInfo } = useContext(UserContext);
+  const { userInfo } = useContext(UserContext);
+  const { loading } = useProfile(); // Destructure loading from the custom hook
 
-  useEffect(() => {
-    fetch("http://localhost:3000/profile", {
-      credentials: "include",
-    }).then((response) => {
-      response.json().then((userInfo) => {
-        setUserInfo(userInfo);
-      });
-    });
-  }, [setUserInfo]); // Added dependency array
+  if (loading) {
+    return null; // or render a loading indicator
+  }
 
   const username = userInfo?.username;
 
   return (
     <>
-      {username && (
-        <>
-          <div className="pt-20">
-            <Post />
-            <Post />
-            <Post />
-            <Post />
-          </div>
-        </>
+      {username ? (
+        <div className="pt-20">
+          <Post />
+          <Post />
+          <Post />
+          <Post />
+        </div>
+      ) : (
+        <Navigate to="/login" />
       )}
-      {!username && <Navigate to={"/login"} />}
     </>
   );
 };
